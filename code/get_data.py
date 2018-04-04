@@ -8,26 +8,11 @@ import socket
 import time  
   
 socket.setdefaulttimeout(20)
-url = 'http://www.imdb.com/search/title?title_type=feature&release_date='
+url = 'http://www.imdb.com/search/title?title_type=feature&countries=us&release_date='
+year_list = ['2017-01-01,2017-01-31','2017-02-02,2017-02-28','2017-03-01,2017-03-31','2017-04-01,2017-04-30','2017-05-01,2017-05-31','2017-06-01,2017-06-30','2017-07-01,2017-07-31','2017-08-01,2017-08-31','2017-09-01,2017-09-30','2017-10-01,2017-10-31','2017-11-01,2017-11-30','2017-12-01,2017-12-31']
 
-year = '2017-07-01,2017-12-31'
 
-page_num = 1
 
-page = requests.get(url + year +'&count=250&page=' + str(page_num))
-
-if page.status_code == '200':
-	print('return 200')
-	
-soup = BeautifulSoup(page.text, 'html.parser')
-
-count_text = soup.select('div.nav div.desc')[0].get_text()
-count_groups = re.search(' (\d+),(\d+) titles', count_text)
-count = math.ceil(int(count_groups.group(1) + count_groups.group(2)) / 250)
-
-if count > 10000: 
-	print('too many result')
-	exit()
 
 	
 def ensureUtf(s):
@@ -69,14 +54,33 @@ def movie_data(movie):
 		list1 = list(map(lambda x:ensureUtf(x), list1))
 		print(list1)
 		spamwriter.writerow(list1)
-for page_num in range(1, count+1) :
-	
-	time.sleep(1)
-			
-	page = requests.get(url + year +'&count=250&page=' + str(page_num))
-	soup = BeautifulSoup(page.text, 'html.parser')
-		
+def get_with_year(year):
+	page_num = 1
 
-	movies = soup.select("h3.lister-item-header a")
-	for movie in movies:
-		movie_data(movie)
+	page = requests.get(url + year +'&count=250&page=' + str(page_num))
+
+	if page.status_code == '200':
+		print('return 200')
+		
+	soup = BeautifulSoup(page.text, 'html.parser')
+
+	count_text = soup.select('div.nav div.desc')[0].get_text()
+	count_groups = re.search(' (\d+),(\d+) titles', count_text)
+	count = math.ceil(int(count_groups.group(1) + count_groups.group(2)) / 250)
+
+	if count > 10000: 
+		print('too many result')
+		exit()
+		
+	for page_num in range(1, count+1) :
+		
+		time.sleep(1)
+				
+		page = requests.get(url + year +'&count=250&page=' + str(page_num))
+		soup = BeautifulSoup(page.text, 'html.parser')
+			
+		movies = soup.select("h3.lister-item-header a")
+		for movie in movies:
+			movie_data(movie)
+for year in year_list:
+	get_with_year(year)

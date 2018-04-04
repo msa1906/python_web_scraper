@@ -1,5 +1,6 @@
 import csv
 import re
+import os
 
 name = '2017-01-01,2017-01-31_filted'
 
@@ -12,12 +13,12 @@ def ensureUtf(s):
     return str(s)
 
 
-	
+directory = r'C:\Users\Logan\Desktop\python_web_scraper\company_company\filted-data\filted'
 film = {}
 
 for filename in os.listdir(directory):
-    if filename.endswith(".scv"): 
-				
+	if filename.endswith(".csv"):
+		print(filename)
 		spamReader = csv.reader(open(filename, newline=''))
 		for row in spamReader:
 			if len(row) > 5:
@@ -32,7 +33,7 @@ for filename in os.listdir(directory):
 
 		Matrix = [[0 for x in range(len(film))] for y in range(len(film))] 
 
-		spamReader = csv.reader(open(name + '.csv', newline=''))					
+		spamReader = csv.reader(open(filename, newline=''))					
 		for row in spamReader:
 			if len(row) > 5:
 				#more than one company
@@ -43,14 +44,10 @@ for filename in os.listdir(directory):
 						print('com1' + row[i] + 'coom2' + row[j]+'counter' + str(Matrix[film[row[i]]][film[row[j]]]))
 						
 		print(Matrix)
-		
-        continue
-    else:
-        continue
-
-
-
-with open('amazon_result'+'.csv', 'a', newline='') as csvfile:
+		continue
+	else:
+		continue
+with open('2017'+'.csv', 'a', newline='') as csvfile:
 	spamwriter = csv.writer(csvfile)
 	list1 = ['']
 	list1.extend(film)
@@ -58,9 +55,8 @@ with open('amazon_result'+'.csv', 'a', newline='') as csvfile:
 	spamwriter.writerow(list1)
 	
 	for (k, v) in film.items():
-		if k = '':
-			list1 = [k]
-			list1.extend(Matrix[v])
+		list1 = [k]
+		list1.extend(Matrix[v])
 			
-			list1 = list(map(lambda x:ensureUtf(x), list1))
-			spamwriter.writerow(list1)
+		list1 = list(map(lambda x:ensureUtf(x), list1))
+		spamwriter.writerow(list1)
